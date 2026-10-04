@@ -1,0 +1,96 @@
+services:
+  web:
+    image: odoo:19.0
+    depends_on:
+      db:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    command: /bin/bash -c "pip install python-jose --break-system-packages && odoo --log-handler=odoo.addons.auth_oidc:DEBUG --log-handler=odoo.addons.auth_oauth:DEBUG --log-handler=odoo.addons.auth_signup:DEBUG"
+    ports:
+      - "8069:8069"
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./config:/etc/odoo
+      - ./addons:/mnt/extra-addons
+    networks:
+      odoo_net:
+        ipv4_address: 172.28.0.2
+    restart: unless-stopped
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: odoo
+      POSTGRES_PASSWORD: odoo
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odoo -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      odoo_net:
+        ipv4_address: 172.28.0.3
+    restart: unless-stopped
+
+  keycloak-db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data/pgdata
+    # LISÄTTY PUUTTUVA HEALTHCHECK TÄHÄN:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      odoo_net:
+        ipv4_address: 172.28.0.4
+    restart: unless-stopped
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: keycloak
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME: "http://localhost:8080"
+      KC_HOSTNAME_STRICT: "false"
+      KC_PROXY: edge
+      KC_PROXY_HEADERS: xforwarded
+      KC_HOSTNAME_STRICT_BACK_CHANNEL: "false"
+    ports:
+      - "8080:8080"
+    networks:
+      odoo_net:
+        ipv4_address: 172.28.0.5
+    restart: unless-stopped
+
+networks:
+  odoo_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
+
+volumes:
+  odoo-web-data:
+  odoo-db-data:
+  keycloak-db-data:
