@@ -1,4 +1,4 @@
-# Odoonn asennus
+# Odoon asennus
 
 ## Docker kontit
 
@@ -7,7 +7,7 @@ kansion juuressa aja seuraava komento:
 docker-compose up -d
 ```
 
-Paketti asentaa Odon:n, sen tarvitseman postgresql:n ja keycloakin
+Paketti asentaa Odoon, sen tarvitseman postgresql:n ja keycloakin
 
 Odoo löytyy osoitteesta: http://localhost:8059
 Keycloak löytyy osoitteesta http://localhost:8080
