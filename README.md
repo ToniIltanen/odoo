@@ -60,3 +60,20 @@ Valitse vasemmasta valikosta **Realm Settings** ja anna osoite jossa keycloak ku
 4. Valitse **Join Groups** ja lisää henkilö joko User ryhmään tai Admin ryhmään:
 ![alt text](<Screenshot 2026-10-04 at 17.16.20.png>)
 5. Tallenna käyttäjä painamalla **Create** Painiketta
+6. Aseta käyttäjälle salasana - Siirry vasemmasta valikosta Users valikkoon (ellet jo ole siellä) ja valitse äsken luomasi käyttäjä.
+![alt text](<Screenshot 2026-10-04 at 17.25.52.png>)
+7. Luo käyttäjälle salasana valitsemalla **Credentials** Välilehti ja paina **Set Password**:
+![alt text](<Screenshot 2026-10-04 at 17.26.37.png>)
+8. Aseta haluamasi salasana, ja **täppää pois Temporary** valinta, ja paina Save:
+![alt text](<Screenshot 2026-10-04 at 17.26.49.png>)
+
+## Kirjautumisen testaaminen
+
+1. Mene Odoo palveluun ja valitse Luomasi OAuth palvelu (esimerkissä Kimmon Betoni SSO):
+![alt text](<Screenshot 2026-10-04 at 17.20.31.png>)
+2. Palvelu ohjautuu keycloakiin kirjautumaan:
+![alt text](<Screenshot 2026-10-04 at 17.21.36.png>)
+3. Syötä luomasi käyttäjän tiedot ja paina **Sign In**:
+![alt text](<Screenshot 2026-10-04 at 17.22.27.png>)
+4. Sinun tulisi ohjautua Odoon Viestintä Appiin:
+![alt text](<Screenshot 2026-10-04 at 17.24.34.png>)
